@@ -2,7 +2,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, String, ForeignKey
 
 from .base import Base, TimestampMixin
-from .course import Enrollment
+from .group import Group, Enrollment
 
 
 class UserRole:
@@ -20,7 +20,6 @@ class User(Base, TimestampMixin):
 
     student_profile: Mapped["Student"] = relationship("Student", uselist=False, back_populates="user")
     teacher_profile: Mapped["Teacher"] = relationship("Teacher", uselist=False, back_populates="user")
-    enrollments: Mapped[list["Enrollment"]] = relationship("Enrollment", back_populates="student")
 
 
 class Student(User):
@@ -33,11 +32,12 @@ class Student(User):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
 
     user: Mapped[User] = relationship("User", back_populates="student_profile")
+    enrollments: Mapped["Enrollment"] = relationship("Enrollment", back_populates="student")
 
 
 class Teacher(User):
     __tablename__ = "teachers"
-    
+
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     first_name: Mapped[str] = mapped_column(String(255), nullable=False)
     last_name: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -46,3 +46,4 @@ class Teacher(User):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
 
     user: Mapped[User] = relationship("User", back_populates="teacher_profile")
+    course: Mapped[list["Group"]] = relationship("Group", back_populates="teacher")
