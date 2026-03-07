@@ -1,0 +1,30 @@
+from datetime import datetime
+
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Integer, Float, ForeignKey, TIMESTAMP, func
+
+from .base import Base, TimestampMixin
+from .user import Student
+from .group import Group
+
+
+class Payment(Base, TimestampMixin):
+    __tablename__ = "payments"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+    student_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("students.id"), nullable=False
+    )
+
+    group_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("groups.id"), nullable=False
+    )
+
+    amount: Mapped[float] = mapped_column(Float, nullable=False)
+
+    paid_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
+
+    student: Mapped["Student"] = relationship("Student", back_populates="payments")
+
+    group: Mapped["Group"] = relationship("Group", back_populates="payments")
