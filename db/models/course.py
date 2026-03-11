@@ -13,3 +13,9 @@ class Course(Base, TimestampMixin):
     price: Mapped[float] = mapped_column(Float, nullable=False)
 
     groups: Mapped[list["Group"]] = relationship("Group", back_populates="course")
+
+    def __str__(self):
+        return f"Course(id={self.id}, name={self.name}, price={self.price})"
+
+    def __str__(self):
+        return f"Course(id={self.id}, name={self.name}, price={self.price})"
